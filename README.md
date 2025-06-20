@@ -34,8 +34,10 @@ Downloads all jpg and png files from a /b/ thread to the current directory.
 1500_webscraping media_scrap --board=b --thread=14067101 --formats=jpg,png --location=. --verbose --m=30
 ```
 
+## Contact
+<ranon7@protonmail.com>
+
 ## Contribute
 
 - fork
 - open pr
-
