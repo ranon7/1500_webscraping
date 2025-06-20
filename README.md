@@ -2,7 +2,7 @@
 
 Collection of Go command line tools for web scraping [1500chan](https://1500chan.org).
 
-## Setup
+## Installation
 
 - Install [Go](https://go.dev/doc/install) in your OS
 - Run `go install github.com/ranon7/1500_webscraping@latest`
@@ -34,7 +34,14 @@ Downloads all jpg and png files from a /b/ thread to the current directory.
 1500_webscraping media_scrap --board=b --thread=14067101 --formats=jpg,png --location=. --verbose --m=30
 ```
 
+## Setup for local development
+
+- clone
+- install go
+- run `go get .`
+
 ## Contact
+
 <ranon7@protonmail.com>
 
 ## Contribute
