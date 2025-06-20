@@ -11,6 +11,14 @@ Collection of Go command line tools for web scraping [1500chan](https://1500chan
 
 Downloads all media files from a thread and saves on a local folder.
 
+### Sample usage
+
+Downloads all jpg and png files from a /b/ thread to the current directory.
+
+```shell
+1500_webscraping media_scrap --board=b --thread=14067101 --formats=jpg,png --location=. --verbose --m=30
+```
+
 ### Command line arguments
 
 | argument | required | default | description                                                                                            | example                                                           |
@@ -24,15 +32,7 @@ Downloads all media files from a thread and saves on a local folder.
 
 ### Output folder structure
 
-Files will be downloaded under the <board>/<thread>/ folder, starting from `location` folder supplied as an argument. The path structure will be created if it does not exist.
-
-### Sample usage
-
-Downloads all jpg and png files from a /b/ thread to the current directory.
-
-```shell
-1500_webscraping media_scrap --board=b --thread=14067101 --formats=jpg,png --location=. --verbose --m=30
-```
+Files will be downloaded under the `location`/`board`/`thread`/ folder. Those values are supplied as command line arguments. The path structure will be created if it does not exist.
 
 ## Setup for local development
 
