@@ -54,6 +54,7 @@ func downloadFile(ctx context.Context, url string, path string) error {
 
 			time.Sleep(initialDelay)
 			initialDelay *= 2
+			tryNumber++
 
 			if resp != nil {
 				resp.Body.Close()
