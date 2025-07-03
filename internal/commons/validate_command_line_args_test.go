@@ -1,4 +1,4 @@
-package mediascrap
+package commons
 
 import (
 	"flag"

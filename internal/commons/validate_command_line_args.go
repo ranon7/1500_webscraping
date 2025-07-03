@@ -1,11 +1,11 @@
-package mediascrap
+package commons
 
 import (
 	"flag"
 	"fmt"
 )
 
-func validateArgs(args []string, fs *flag.FlagSet) error {
+func ValidateArgs(args []string, fs *flag.FlagSet) error {
 	// argumentSet accumulates the command line arguments received from the command line. If the user didn't sent it will not be here
 	argumentsSet := make(map[string]bool)
 

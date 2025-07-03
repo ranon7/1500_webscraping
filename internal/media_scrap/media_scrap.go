@@ -3,16 +3,12 @@ package mediascrap
 import (
 	"context"
 	"flag"
-	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/ranon7/1500_webscraping/internal/commons"
 	"golang.org/x/sync/errgroup"
 )
-
-func enableVerboseLogging() {
-	verboseLogger.SetOutput(os.Stdout)
-}
 
 func Run(args []string) error {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -40,15 +36,15 @@ func Run(args []string) error {
 	}
 
 	reqArgs := []string{"board", "thread", "formats", "location"}
-	if err := validateArgs(reqArgs, fs); err != nil {
+	if err := commons.ValidateArgs(reqArgs, fs); err != nil {
 		return err
 	}
 
 	if verbose {
-		enableVerboseLogging()
+		commons.EnableVerboseLogging()
 	}
 
-	verboseLogger.Println("running media_scrap")
+	commons.VerboseLogger.Println("running media_scrap")
 
 	threadUrl := buildThreadUrl(board, thread)
 	downloadFolder := buildDownloadLocation(location, board, thread)
@@ -58,8 +54,8 @@ func Run(args []string) error {
 	group, ctx := errgroup.WithContext(ctx)
 	group.SetLimit(m)
 
-	verboseLogger.Printf("thread url %s", threadUrl)
-	verboseLogger.Printf("download location %s", downloadFolder)
+	commons.VerboseLogger.Printf("thread url %s", threadUrl)
+	commons.VerboseLogger.Printf("download location %s", downloadFolder)
 	if err := ensureDir(downloadFolder); err != nil {
 		return err
 	}
@@ -68,7 +64,7 @@ func Run(args []string) error {
 		for href := range hrefCh {
 			if validateHref(board, href, formats) {
 				url := buildUrl(href)
-				verboseLogger.Printf("selected for download %s", url)
+				commons.VerboseLogger.Printf("selected for download %s", url)
 				group.Go(func() error {
 					path := buildPathFromUrl(url, downloadFolder)
 					err, exists := fileExists(path)
@@ -76,7 +72,7 @@ func Run(args []string) error {
 						return err
 					}
 					if exists {
-						verboseLogger.Printf("%s already exists, skipped", path)
+						commons.VerboseLogger.Printf("%s already exists, skipped", path)
 					} else {
 						if err := downloadFile(ctx, url, path); err != nil {
 							return err
@@ -97,7 +93,7 @@ func Run(args []string) error {
 		return err
 	}
 
-	logger.Printf("finished, files saved to %s", downloadFolder)
+	commons.Logger.Printf("finished, files saved to %s", downloadFolder)
 
 	return nil
 }
