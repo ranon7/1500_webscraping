@@ -7,14 +7,9 @@ import (
 	"net/http"
 	"os"
 	"time"
-)
 
-const (
-	maxRetries = 3
-	timeout    = 2 * time.Minute
+	"github.com/ranon7/1500_webscraping/internal/commons"
 )
-
-var initialDelay = 3 * time.Second
 
 func downloadFile(ctx context.Context, url string, path string) error {
 	ctx, cancel := context.WithTimeout(ctx, timeout)
@@ -30,9 +25,11 @@ func downloadFile(ctx context.Context, url string, path string) error {
 	}
 
 	tryNumber := 1
+	delay := initialDelay
+
 	for {
-		verboseLogger.Printf("attempting to download file. try number %d", tryNumber)
-		resp, err := http.DefaultClient.Do(req)
+		commons.VerboseLogger.Printf("attempt %d to download file", tryNumber)
+		resp, err := http_client.Do(req)
 		if err == nil {
 			out, err := os.Create(path)
 			if err != nil {
@@ -47,13 +44,13 @@ func downloadFile(ctx context.Context, url string, path string) error {
 			break
 		} else {
 			if tryNumber > maxRetries {
-				verboseLogger.Println("failed to download but retries exceded")
+				commons.VerboseLogger.Println("failed to download but retries exceded")
 				return fmt.Errorf("failed to download %s: %w", url, err)
 			}
-			verboseLogger.Println("failed to download, will retry")
+			commons.VerboseLogger.Println("failed to download, will retry")
 
 			time.Sleep(initialDelay)
-			initialDelay *= 2
+			delay *= 2
 			tryNumber++
 
 			if resp != nil {

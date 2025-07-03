@@ -1,20 +1,18 @@
 package mediascrap
 
 import (
-	"fmt"
 	"path"
 	"strings"
 )
 
-func validateHref(board string, href string, acceptedFormats FileFormats) bool {
-	if !strings.HasPrefix(href, fmt.Sprintf("/%s", board)) {
-		return false
-	}
-	ext := path.Ext(href)                  // returns ".jpeg"
-	format := strings.TrimPrefix(ext, ".") // returns "jpeg"
+func validateHref(href string, acceptedFormats FileFormats) bool {
+	ext := path.Ext(href)
+	format := strings.TrimPrefix(ext, ".")
 
-	if _, ok := acceptedFormats.Lookup[format]; !ok {
-		return false
+	if len(acceptedFormats.Lookup) > 0 {
+		if _, ok := acceptedFormats.Lookup[format]; !ok {
+			return false
+		}
 	}
 
 	return true

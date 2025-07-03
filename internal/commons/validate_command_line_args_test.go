@@ -18,12 +18,12 @@ func TestValidateArgs(t *testing.T) {
 		name     string
 	}{
 		{
-			validateArgs([]string{"arg1"}, fs),
+			ValidateArgs([]string{"arg1"}, fs),
 			nil,
 			"Should not return an error",
 		},
 		{
-			validateArgs([]string{"arg1", "arg2"}, fs),
+			ValidateArgs([]string{"arg1", "arg2"}, fs),
 			fmt.Errorf("missing required -%s argument", "arg2"),
 			"Should return an error",
 		},

@@ -22,6 +22,7 @@ func Run(args []string) error {
 	var location string
 	var verbose bool
 	var m int
+	var forceDownload bool
 
 	fs := flag.NewFlagSet("mediascrap", flag.ExitOnError)
 	fs.StringVar(&board, "board", "", "Valid board name from 1500chan.org. Required")
@@ -30,6 +31,7 @@ func Run(args []string) error {
 	fs.StringVar(&location, "location", "", "The location where the media will be saved into your file system. If it doesn't exist it'll be created. Required")
 	fs.BoolVar(&verbose, "verbose", false, "Enable detailed logs. Disabled by default")
 	fs.IntVar(&m, "m", 30, "Controls the parallism - how many files being downloaded at a time. Defaults to 30")
+	fs.BoolVar(&forceDownload, "force", false, "Whether to force download existing files in the destination folder")
 
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -49,8 +51,7 @@ func Run(args []string) error {
 	threadUrl := buildThreadUrl(board, thread)
 	downloadFolder := buildDownloadLocation(location, board, thread)
 	total := 0
-	hrefCh := make(chan string)
-	c := setupColly(hrefCh)
+	urlCh := make(chan string)
 	group, ctx := errgroup.WithContext(ctx)
 	group.SetLimit(m)
 
@@ -61,9 +62,8 @@ func Run(args []string) error {
 	}
 
 	go func() {
-		for href := range hrefCh {
-			if validateHref(board, href, formats) {
-				url := buildUrl(href)
+		for url := range urlCh {
+			if validateHref(url, formats) {
 				commons.VerboseLogger.Printf("selected for download %s", url)
 				group.Go(func() error {
 					path := buildPathFromUrl(url, downloadFolder)
@@ -71,8 +71,8 @@ func Run(args []string) error {
 					if err != nil {
 						return err
 					}
-					if exists {
-						commons.VerboseLogger.Printf("%s already exists, skipped", path)
+					if exists && !forceDownload {
+						commons.VerboseLogger.Printf("%s already exists, not downloading again", path)
 					} else {
 						if err := downloadFile(ctx, url, path); err != nil {
 							return err
@@ -81,12 +81,25 @@ func Run(args []string) error {
 					return nil
 				})
 				total++
+			} else {
+				commons.VerboseLogger.Printf("download skipped for file %s", url)
 			}
 		}
 	}()
 
-	if err := c.Visit(threadUrl); err != nil {
+	posts, err := getThreadPosts(ctx, threadUrl)
+	if err != nil {
 		return err
+	}
+
+	for _, post := range posts {
+		if _, exists := post["filename"]; exists {
+			tim := post["tim"].(string)
+			ext := post["ext"].(string)
+
+			url := buildFileUrl(board, tim, ext)
+			urlCh <- url
+		}
 	}
 
 	if err := group.Wait(); err != nil {

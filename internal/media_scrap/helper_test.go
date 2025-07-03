@@ -22,7 +22,7 @@ func TestBuildThreadUrl(t *testing.T) {
 	thread := "111"
 
 	actual := buildThreadUrl(board, thread)
-	expected := fmt.Sprintf("%s/b/res/111.html", caravelaBaseUrl)
+	expected := fmt.Sprintf("%s/b/res/111.json", caravelaBaseUrl)
 	if actual != expected {
 		t.Fatalf("actual %s expected %s", actual, expected)
 	}
@@ -41,11 +41,13 @@ func TestBuildDownloadLocation(t *testing.T) {
 	}
 }
 
-func TestBuildUrl(t *testing.T) {
-	relativePath := "/b/file.mp4"
+func TestBuildFileUrl(t *testing.T) {
+	board := "b"
+	filename := "myfile"
+	ext := ".mp4"
 
-	actual := buildUrl(relativePath)
-	expected := fmt.Sprintf("%s/b/file.mp4", caravelaBaseUrl)
+	actual := buildFileUrl(board, filename, ext)
+	expected := fmt.Sprintf("%s/%s/src/%s%s", caravelaBaseUrl, board, filename, ext)
 
 	if actual != expected {
 		t.Fatalf("actual %s expected %s", actual, expected)

@@ -13,10 +13,10 @@ Downloads all media files from a thread and saves on a local folder.
 
 ### Sample usage
 
-Downloads all jpg and png files from a /b/ thread to the current directory.
+Downloads all mp4, webm and jpg files from a /b/ thread to the current directory.
 
 ```shell
-1500_webscraping media_scrap --board=b --thread=14067101 --formats=jpg,png --location=. --verbose --m=30
+1500_webscraping media_scrap --board=b --thread=14067101 --formats=mp4,webm,jpg --location=. --verbose --m=30
 ```
 
 ### Command line arguments
@@ -29,6 +29,7 @@ Downloads all jpg and png files from a /b/ thread to the current directory.
 | location | yes      |         | The location where the media will be saved into your file system. If it doesn't exist it'll be created | /home/anon/archive or just "." (expands to the current directory) |
 | verbose  | no       | false   | Enable detailed logs. Disabled by default                                                              | true                                                              |
 | m        | no       | 30      | Controls the parallism - how many files being downloaded at a time                                     | 1000                                                              |
+| force        | no       | false      | Whether to force download existing files in the destination folder                                     | true                                                              |
 
 ### Output folder structure
 
